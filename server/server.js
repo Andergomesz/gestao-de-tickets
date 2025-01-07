@@ -20,8 +20,6 @@ const io = new Server(server, {
   },
 });
 
-mysql://root:XsmxjCgluNLpkAuaQkkQRzNgLCutOUwE@autorack.proxy.rlwy.net:57619/railway
-
 // 1. Configura o CORS
 app.use(cors());
 
@@ -30,14 +28,14 @@ app.use(express.json({ limit: '50mb' }));
 app.use(express.urlencoded({ limit: '50mb', extended: true }));
 
 // 3. Conexão com o banco de dados (Railway)
+// Utilize o host (autorack.proxy.rlwy.net) e a porta (57619) fornecidos pelo Railway
 const db = mysql.createConnection({
-  host: 'mysql.railway.internal',              // ou mysql.railway.internal
+  host: 'autorack.proxy.rlwy.net',
   user: 'root',
   password: 'XsmxjCgluNLpkAuaQkkQRzNgLCutOUwE',
   database: 'railway',
   port: 57619
 });
-
 
 // Conecta ao banco de dados
 db.connect(err => {
@@ -136,9 +134,9 @@ app.get('/usuarios', (req, res) => {
 // Rota GET para buscar todos os clientes em ordem alfabética
 app.get('/clientes', (req, res) => {
   const query = `
-    SELECT DISTINCT TRIM(Cliente) AS Cliente 
-    FROM cliente 
-    WHERE Cliente IS NOT NULL AND TRIM(Cliente) <> '' 
+    SELECT DISTINCT TRIM(Cliente) AS Cliente
+    FROM cliente
+    WHERE Cliente IS NOT NULL AND TRIM(Cliente) <> ''
     ORDER BY Cliente ASC
   `;
   db.query(query, (err, results) => {
@@ -157,9 +155,9 @@ app.get('/clientes', (req, res) => {
 // Rota GET para buscar todas as redes em ordem alfabética
 app.get('/redes', (req, res) => {
   const query = `
-    SELECT DISTINCT TRIM(Rede) AS Rede 
-    FROM rede 
-    WHERE Rede IS NOT NULL AND TRIM(Rede) <> '' 
+    SELECT DISTINCT TRIM(Rede) AS Rede
+    FROM rede
+    WHERE Rede IS NOT NULL AND TRIM(Rede) <> ''
     ORDER BY Rede ASC
   `;
   db.query(query, (err, results) => {
@@ -178,9 +176,9 @@ app.get('/redes', (req, res) => {
 // Rota GET para buscar todas as motivos em ordem alfabética
 app.get('/motivos', (req, res) => {
   const query = `
-    SELECT DISTINCT TRIM(Motivo) AS Motivo 
-    FROM motivo 
-    WHERE Motivo IS NOT NULL AND TRIM(Motivo) <> '' 
+    SELECT DISTINCT TRIM(Motivo) AS Motivo
+    FROM motivo
+    WHERE Motivo IS NOT NULL AND TRIM(Motivo) <> ''
     ORDER BY Motivo ASC
   `;
   db.query(query, (err, results) => {
@@ -199,8 +197,8 @@ app.get('/motivos', (req, res) => {
 // Rotas de contagem (opcional)
 app.get('/clientes/count', (req, res) => {
   const query = `
-    SELECT COUNT(DISTINCT TRIM(Cliente)) AS total 
-    FROM cliente 
+    SELECT COUNT(DISTINCT TRIM(Cliente)) AS total
+    FROM cliente
     WHERE Cliente IS NOT NULL AND TRIM(Cliente) <> ''
   `;
   db.query(query, (err, results) => {
@@ -216,8 +214,8 @@ app.get('/clientes/count', (req, res) => {
 
 app.get('/redes/count', (req, res) => {
   const query = `
-    SELECT COUNT(DISTINCT TRIM(Rede)) AS total 
-    FROM rede 
+    SELECT COUNT(DISTINCT TRIM(Rede)) AS total
+    FROM rede
     WHERE Rede IS NOT NULL AND TRIM(Rede) <> ''
   `;
   db.query(query, (err, results) => {
@@ -233,8 +231,8 @@ app.get('/redes/count', (req, res) => {
 
 app.get('/motivos/count', (req, res) => {
   const query = `
-    SELECT COUNT(DISTINCT TRIM(Motivo)) AS total 
-    FROM motivo 
+    SELECT COUNT(DISTINCT TRIM(Motivo)) AS total
+    FROM motivo
     WHERE Motivo IS NOT NULL AND TRIM(Motivo) <> ''
   `;
   db.query(query, (err, results) => {
@@ -283,14 +281,13 @@ app.post('/tickets', async (req, res) => {
       // Verificar se o usuário existe antes de inserir/atualizar
       const usuarioExiste = await verificarUsuarioExiste(dbPromise, ticket.usuario);
       if (!usuarioExiste) {
-        // Se não existe, registra erro e continua
         erros.push(`Usuário não encontrado: ${ticket.usuario} (Ticket ID: ${ticket.id})`);
         continue;
       }
 
       // Verifica se o ticket já existe
       const [results] = await dbPromise.query('SELECT id FROM tickets WHERE id = ?', [ticket.id]);
-      
+
       if (results.length > 0) {
         // Atualizar ticket
         const atualizarQuery = `
@@ -325,7 +322,6 @@ app.post('/tickets', async (req, res) => {
         } catch (err) {
           erros.push(`Erro ao atualizar o ticket ${ticket.id}: ${err.message}`);
         }
-
       } else {
         // Inserir ticket
         const inserirQuery = `
@@ -368,7 +364,6 @@ app.post('/tickets', async (req, res) => {
     } else {
       return res.send('Tickets sincronizados com sucesso.');
     }
-
   } catch (globalError) {
     console.error('Erro geral ao sincronizar tickets:', globalError);
     return res.status(500).send(`Erro geral: ${globalError.message}`);
@@ -423,7 +418,6 @@ app.post('/observacoes', async (req, res) => {
     } else {
       return res.send('Observações sincronizadas com sucesso.');
     }
-
   } catch (error) {
     console.error('Erro geral em /observacoes:', error);
     return res.status(500).send(`Erro geral: ${error.message}`);

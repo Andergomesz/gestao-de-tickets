@@ -27,12 +27,13 @@ app.use(cors());
 app.use(express.json({ limit: '50mb' }));
 app.use(express.urlencoded({ limit: '50mb', extended: true }));
 
-// 3. Conexão com o banco de dados
+// 3. Conexão com o banco de dados (Railway)
 const db = mysql.createConnection({
-  host: 'localhost',   // ou 127.0.0.1
+  host: 'mysql.railway.internal',              // ou mysql.railway.internal
   user: 'root',
-  password: '1234',
-  database: 'sistema_tickets'
+  password: 'PrfvdiNQVTtxCnTuGJFQJRnOiGPIGLqZ',
+  database: 'railway',
+  port: 3306
 });
 
 // Conecta ao banco de dados
@@ -41,7 +42,7 @@ db.connect(err => {
     console.error('Erro ao conectar ao banco de dados:', err);
     process.exit(1); // Encerra o servidor se não conectar ao BD
   } else {
-    console.log('Conectado ao banco de dados MySQL.');
+    console.log('Conectado ao banco de dados MySQL (Railway).');
   }
 });
 
@@ -142,7 +143,6 @@ app.get('/clientes', (req, res) => {
       console.error('Erro ao buscar clientes:', err);
       return res.status(500).json({ error: 'Erro ao buscar clientes' });
     }
-    // Extrai os valores de cliente em um array e filtra valores vazios
     const clientes = results
       .map(row => row.Cliente)
       .filter(cliente => cliente && cliente.trim() !== '');
@@ -164,7 +164,6 @@ app.get('/redes', (req, res) => {
       console.error('Erro ao buscar redes:', err);
       return res.status(500).json({ error: 'Erro ao buscar redes' });
     }
-    // Extrai os valores de rede em um array e filtra valores vazios
     const redes = results
       .map(row => row.Rede)
       .filter(rede => rede && rede.trim() !== '');
@@ -173,7 +172,7 @@ app.get('/redes', (req, res) => {
   });
 });
 
-// Rota GET para buscar todos os motivos em ordem alfabética
+// Rota GET para buscar todas as motivos em ordem alfabética
 app.get('/motivos', (req, res) => {
   const query = `
     SELECT DISTINCT TRIM(Motivo) AS Motivo 
@@ -186,7 +185,6 @@ app.get('/motivos', (req, res) => {
       console.error('Erro ao buscar motivos:', err);
       return res.status(500).json({ error: 'Erro ao buscar motivos' });
     }
-    // Extrai os valores de motivo em um array e filtra valores vazios
     const motivos = results
       .map(row => row.Motivo)
       .filter(motivo => motivo && motivo.trim() !== '');
@@ -587,9 +585,10 @@ io.on('connection', (socket) => {
 });
 
 /* ======================================================
-   INICIA O SERVIDOR NA PORTA DESEJADA
- ====================================================== */
-const PORT = 3000;
+   INICIA O SERVIDOR
+   ====================================================== */
+// Usa a variável de ambiente PORT (se existir) ou 3000
+const PORT = process.env.PORT || 3000;
 server.listen(PORT, () => {
   console.log(`Servidor rodando em http://127.0.0.1:${PORT}`);
 });

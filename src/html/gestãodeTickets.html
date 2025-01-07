@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <!-- Metadados -->
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+    <title>Gestão de Tickets</title>
+
+    <!-- Folhas de estilo externas e locais -->
+    <link rel="stylesheet" href="/src/css/styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.3.0/css/all.min.css" integrity="sha512-SzlrxWUlpfuzQ+pcUCosxcglQRNAq/DZjVsC0lE40xsADsfeQoEypE+enwcOiGjk/bSuGGKHEyjSoQ1zVisanQ==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-GLhlTQ8iRABdZLl6O3oVMWSktQOp6b7In1Zl3/Jr59b6EGGoI1aFkw7cmDA6j6gD" crossorigin="anonymous">
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+</head>
+
+<body class="sb-nav-fixed">
+    <nav class="sb-topnav navbar navbar-expand navbar-dark bg-dark">
+        <!-- Título e nome do sistema -->
+        <a class="navbar-brand ps-3" href="#">AnderGomesz</a>
+        <h2 class="text-white m-auto">Gestão de Tickets</h2>
+
+        <!-- Opções do usuário -->
+        <ul class="navbar-nav ms-auto me-0 me-md-3 my-2 my-md-0">
+            <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" id="navbarDropdown" href="#" role="button"
+                   data-bs-toggle="dropdown" aria-expanded="false">
+                   <i class="fas fa-user fa-fw"></i>
+                </a>
+                <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
+                    <li><a class="dropdown-item" id="toggle-theme">Alternar Modo</a></li>
+                    <li><a class="dropdown-item" href="/src/html/dashboardTickets.html">Dashboard</a></li>
+                    <li><a class="dropdown-item" href="/public/index.html">Sair</a></li>
+                </ul>
+            </li>
+        </ul>
+    </nav>
+
+    <div id="layoutSidenav">
+        <div id="layoutSidenav_content">
+            <main>
+                <div class="container-fluid px-3">
+                    <div id="app">
+                        <!-- Seção para abrir um novo ticket -->
+                        <section id="abrir-ticket">
+                            <form id="ticket-form">
+                                <!-- Campos do Formulário de Ticket -->
+                                <div class="row">
+                                    <!-- Cliente -->
+                                    <div class="col-3">
+                                        <label for="cliente">Cliente: <span style="color: red;">*</span></label>
+                                        <select id="cliente" name="cliente" required>
+                                            <option value="">Selecione o Cliente</option>
+                                        </select>
+                                    </div>
+
+                                    <!-- Rede -->
+                                    <div class="col-3">
+                                        <label for="rede">Rede:</label>
+                                        <select id="rede" name="rede">
+                                            <option value="">Selecione a Rede</option>
+                                        </select>
+                                    </div>
+
+                                    <!-- Motivo -->
+                                    <div class="col-3">
+                                        <label for="motivo">Motivo: <span style="color: red;">*</span></label>
+                                        <select id="motivo" name="motivo" required>
+                                            <option value="">Selecione o Motivo</option>
+                                        </select>
+                                    </div>
+
+                                    <!-- Prioridade -->
+                                    <div class="col-3">
+                                        <label for="prioridade">Prioridade: <span style="color: red;">*</span></label>
+                                        <select id="prioridade" name="prioridade" required>
+                                            <option value="">Selecione a Prioridade</option>
+                                        </select>
+                                    </div>
+
+                                    <!-- Veículo -->
+                                    <div class="col-3">
+                                        <label for="veiculo">Veículo de Abertura: <span style="color: red;">*</span></label>
+                                        <select id="veiculo" name="veiculo" required>
+                                            <option value="">Selecione o Veículo de Abertura</option>
+                                        </select>
+                                    </div>
+
+                                    <!-- Datas de Início e Fim -->
+                                    <div class="col-3">
+                                        <label for="data-inicio">Previsão de início: <span style="color: red;">*</span></label>
+                                        <input type="date" id="data-inicio" name="data-inicio" required>
+                                    </div>
+                                    <div class="col-3">
+                                        <label for="data-fim">Previsão de fim: <span style="color: red;">*</span></label>
+                                        <input type="date" id="data-fim" name="data-fim" required>
+                                    </div>
+
+                                    <!-- Anexar Arquivo -->
+                                    <div class="col-3">
+                                        <label for="anexo">Anexar Arquivo:</label>
+                                        <input type="file" id="anexo" name="anexo" accept=".jpg,.jpeg,.png,.pdf,.csv,.xlsx" multiple>
+                                    </div>
+                                </div>
+
+                                <!-- Descrição -->
+                                <div class="row">
+                                    <div class="col-12">
+                                        <label for="descricao">Descrição:</label>
+                                        <textarea id="descricao" name="descricao"></textarea>
+                                    </div>
+                                </div>
+
+                                <!-- Botão para abrir ticket -->
+                                <button type="submit">Abrir Ticket</button>
+                            </form>
+                        </section>
+
+                        <!-- Painel de controle dos tickets -->
+                        <section id="painel-controle">
+                            <div class="painel-cards">
+                                <!-- Resumo de tickets por estado -->
+                                <div class="painel-card" data-tab="nao-iniciados">
+                                    <h2>Tickets Não Iniciados</h2>
+                                    <p id="nao-iniciados-count">0</p>
+                                </div>
+                                <div class="painel-card" data-tab="em-andamento">
+                                    <h2>Tickets em Andamento</h2>
+                                    <p id="em-andamento-count">0</p>
+                                </div>
+                                <div class="painel-card" data-tab="finalizados">
+                                    <h2>Tickets Finalizados</h2>
+                                    <p id="finalizados-count">0</p>
+                                </div>
+                                <div class="painel-card" data-tab="excluidos">
+                                    <h2>Tickets Excluídos</h2>
+                                    <p id="excluidos-count">0</p>
+                                </div>
+                                <div class="painel-card" data-tab="todos">
+                                    <h2>Total de Tickets</h2>
+                                    <p id="total-tickets-count">0</p>
+                                </div>
+                            </div>
+                        </section>
+
+                        <!-- Seção de gerenciamento dos tickets -->
+                        <section id="tickets-abertos">
+                            <!-- Botões de aba -->
+                            <div class="tabs">
+                                <button class="tab-button" data-tab="nao-iniciados">Tickets Não Iniciados</button>
+                                <button class="tab-button" data-tab="em-andamento">Tickets em Andamento</button>
+                                <button class="tab-button" data-tab="finalizados">Tickets Finalizados</button>
+                                <button class="tab-button" data-tab="excluidos">Tickets Excluídos</button>
+                                <button class="tab-button" data-tab="todos">Todos os Tickets</button>
+                            </div>
+
+                            <!-- Pesquisa e Download -->
+                            <div class="search-download">
+                                <div class="search-container">
+                                    <input type="text" id="search" placeholder="Pesquisar Cliente">
+                                    <i class="fas fa-search search-icon"></i>
+                                </div>
+                                <div class="download-buttons">
+                                    <button id="download-json" class="download-button">
+                                        <i class="fas fa-download"></i> Baixar JSON
+                                    </button>
+                                    <button id="download-xlsx" class="download-button">
+                                        <i class="fas fa-download"></i> Baixar XLSX
+                                    </button>
+                                </div>
+                            </div>
+
+                            <!-- Conteúdo das abas de tickets -->
+                            <div class="tab-content" id="tab-todos"></div>
+                            <div class="tab-content" id="tab-nao-iniciados"></div>
+                            <div class="tab-content" id="tab-em-andamento"></div>
+                            <div class="tab-content" id="tab-finalizados"></div>
+                            <div class="tab-content" id="tab-excluidos"></div>
+                        </section>
+                    </div>
+
+                    <!-- Pop-up para exclusão de tickets -->
+                    <div id="popup-excluir" class="popup">
+                        <div class="popup-content">
+                            <h2>Motivo para Exclusão</h2>
+                            <select id="motivo-exclusao" required>
+                                <option value="Cliente não precisa mais da tarefa">Cliente não precisa mais da tarefa</option>
+                                <option value="Cliente insatisfeito com o progresso da tarefa">Cliente insatisfeito com o progresso da tarefa</option>
+                                <option value="Cliente não pode pagar pela tarefa">Cliente não pode pagar pela tarefa</option>
+                                <option value="Erro na criação do ticket">Erro na criação do ticket</option>
+                                <option value="Tarefa fora do escopo do serviço">Tarefa fora do escopo do serviço</option>
+                                <option value="Problemas técnicos">Problemas técnicos</option>
+                                <option value="Priorização de outras tarefas">Priorização de outras tarefas</option>
+                                <option value="Decisão estratégica da empresa">Decisão estratégica da empresa</option>
+                            </select>
+                            <button id="confirmar-exclusao">Confirmar</button>
+                            <button id="cancelar-exclusao">Cancelar</button>
+                        </div>
+                    </div>
+
+                    <!-- Pop-up para detalhes do ticket -->
+                    <div id="popup-detalhes" class="popup" style="display: none;">
+                        <div class="popup-content">
+                            <!-- Botão "X" fora do modal para fechar -->
+                            <button class="close-modal-btn" id="close-modal">&times;</button>
+                            <div class="detalhes-grid">
+                                <!-- Primeira Coluna - Detalhes do Ticket -->
+                                <div class="col-4 detalhes-coluna">
+                                    <h3>Detalhes do Ticket</h3>
+                                    <p><strong>Cliente:</strong> <span id="detalhe-cliente"></span></p>
+                                    <p><strong>Usuário:</strong> <span id="detalhe-usuario"></span></p>
+                                    <p><strong>Rede:</strong> <span id="detalhe-rede"></span></p>
+                                    <p><strong>Motivo:</strong> <span id="detalhe-motivo"></span></p>
+                                    <p><strong>Veículo:</strong> <span id="detalhe-veiculo"></span></p>
+                                    <p><strong>Previsão de Início:</strong> <span id="detalhe-inicio"></span></p>
+                                    <p><strong>Previsão de Fim:</strong> <span id="detalhe-fim"></span></p>
+                                    <p><strong>Abertura:</strong> <span id="detalhe-abertura"></span></p>
+                                    <p><strong>Finalização:</strong> <span id="detalhe-finalizacao"></span></p>
+                                    <p><strong>Tempo de ticket aberto:</strong> <span id="detalhe-tempo-aberto"></span></p>
+                                    <p><strong>Status:</strong> <span id="detalhe-status"></span></p>
+                                    <p><strong>Prioridade:</strong> <span id="detalhe-prioridade"></span></p>
+                                    <p><strong>Descrição:</strong> <span id="detalhe-descricao"></span></p>
+                                    <p><strong>Motivo para Exclusão:</strong> <span id="detalhe-motivo-exclusao"></span></p>
+                                </div>
+
+                                <!-- Segunda Coluna - Comunidade (Convidados) -->
+                                <div class="col-4 detalhes-coluna">
+                                    <h3>Comunidade</h3>
+                                    <!-- Campo de Input e Botão para Adicionar Convidado -->
+                                    <div class="adicionar-convidado">
+                                        <input type="email" id="adicionar-convidado" placeholder="Digite o e-mail do convidado" />
+                                        <i class="fas fa-user-plus adicionar-convidado-icon" id="adicionar-convidado-icon"></i>
+                                    </div>
+                                    <div class="lista-convidados-container chat-box">
+                                        <h4>Convidados</h4>
+                                        <ul id="convidados-list" class="observacoes-container">
+                                            <!-- Os convidados serão adicionados aqui dinamicamente -->
+                                        </ul>
+                                    </div>
+                                </div>
+
+                                <!-- Terceira Coluna - Chat de Observações -->
+                                <div class="col-4 detalhes-coluna">
+                                    <h3>Chat de Observações</h3>
+                                    <div id="chat-box" class="chat-box">
+                                        <div id="lista-observacoes" class="observacoes-container">
+                                            <!-- As mensagens enviadas serão adicionadas aqui -->
+                                        </div>
+                                    </div>
+                                    <div class="chat-input">
+                                        <textarea id="adicionar-observacao" placeholder="Digite uma mensagem..." rows="1"></textarea>
+                                        <div class="chat-actions">
+                                            <!-- Anexo -->
+                                            <label for="novo-anexo" class="anexo-label">
+                                                <i class="fas fa-paperclip"></i>
+                                                <span id="anexo-contador">(0)</span> <!-- Contador de anexos -->
+                                            </label>
+                                            <input type="file" id="novo-anexo" accept=".jpg,.jpeg,.png,.pdf,.csv,.xlsx,.pptx" name="anexo" multiple />
+                                            <!-- Botão Enviar Mensagem -->
+                                            <button id="enviar-mensagem" class="btn-send">
+                                                <i class="fas fa-paper-plane"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </main>
+
+            <!-- Rodapé da página -->
+            <footer class="py-4 bg-light mt-auto">
+                <div class="container-fluid px-4">
+                    <div class="d-flex align-items-center justify-content-between small">
+                        <div class="text-muted">&copy; AnderGomesz 2024</div>
+                        <div>
+                            <a href="#">Política de Privacidade</a> &middot;
+                            <a href="#">Termos &amp; Condições</a>
+                        </div>
+                    </div>
+                </div>
+            </footer>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <!-- 1) Socket.IO client -->
+    <script src="/node_modules/socket.io/client-dist/socket.io.js"></script>
+
+    <!-- 2) jQuery + Select2 + Bootstrap -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"
+            integrity="sha384-w76AqPfDkMBDXo30jS1Sgez6pr3x5MlQ1ZAGC+nuZB+EYdgRZgiwxhTBTkF7CXvN"
+            crossorigin="anonymous"></script>
+
+    <!-- 3) XLSX para exportar planilhas -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.16.9/xlsx.full.min.js"></script>
+
+    <!-- 4) Seus scripts de aplicação -->
+    <script src="/src/js/index.js"></script> <!-- se existir -->
+    <script src="/src/js/scripts.js"></script>
+
+    <!-- 5) MSSQL script importado (se realmente necessário) -->
+    <script src="https://unpkg.com/mssql@7.6.0"></script>
+
+</body>
+</html>

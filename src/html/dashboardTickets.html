@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <title>Dashboard de Tickets</title>
+
+  <!-- Importar CSS -->
+  <link rel="stylesheet" href="/src/css/dashboardTickets.css" />
+
+  <!-- Importar Highcharts -->
+  <script src="https://code.highcharts.com/highcharts.js"></script>
+  <script src="https://code.highcharts.com/modules/exporting.js"></script>
+  <script src="https://code.highcharts.com/modules/export-data.js"></script>
+  <script src="https://code.highcharts.com/modules/accessibility.js"></script>
+
+  <!-- Importar Bibliotecas para Tabela Ordenável -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/sortable/1.14.0/js/sortable.min.js" integrity="sha512-lH+7FWq7WyTmYVgIIsvSCMFwQciMDuF+NSsH6N+FgHk3OQZ+QTFXdgQ5X74l3Yqck5nv/fmhn1MMDwMSQF6Yng==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+  <!-- Importar Font Awesome para Ícones -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha512-papO4DGkI3frhUftnlK3g+7MYDwwAd0G3CNX+hGzqmJmnYhKOtNDFns0TU+7sV4zyvvQjxoC+60dYyfHXtPBTA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+  <!-- Importar Bootstrap CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-GLhlTQ8iRABdZLl6O3oVMWSktQOp6b7In1Zl3/Jr59b6EGGoI1aFkw7cmDA6j6gD" crossorigin="anonymous">
+
+  <!-- Importar SheetJS para exportar para Excel -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js" integrity="sha512-dI6Y/Ba0xfPNRCFJ5JylWVEb/6S5E9P+k8xqXaIAFpX+4vH5ZrbAP/zPU1NlHD2wt6gv8oCMlYBqT09WXHVhtA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+</head>
+
+<body>
+
+  <!-- Barra de Navegação -->
+  <nav class="sb-topnav navbar navbar-expand navbar-dark bg-dark">
+      <!-- Título e nome do sistema -->
+      <a class="navbar-brand ps-3" href="/src/html/dashboardTickets.html">AnderGomesz</a>
+      <h2 class="text-white m-auto">Dashboard Tickets</h2>
+
+      <!-- Opções do usuário -->
+      <ul class="navbar-nav ms-auto me-0 me-md-3 my-2 my-md-0">
+          <li class="nav-item dropdown">
+              <a class="nav-link dropdown-toggle" id="navbarDropdown" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false"><i class="fas fa-user fa-fw"></i></a>
+              <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
+                  <li><a class="dropdown-item" href="/src/html/gestãodeTickets.html">Gestão de Tickets</a></li>
+                  <li><a class="dropdown-item" href="/public/index.html">Sair</a></li>
+              </ul>
+          </li>
+      </ul>
+  </nav>
+
+  <!-- Contêiner Responsivo para o Conteúdo Principal -->
+  <div class="container">
+    <!-- Filtros principais (filtram toda a página) -->
+    <div class="filtros-principais">
+      <div class="linha-filtros">
+        <div class="filtro">
+          <label for="filtroCliente"><i class="fa fa-building"></i> Cliente:</label>
+          <select id="filtroCliente" aria-label="Filtro por Cliente">
+            <!-- Opções preenchidas dinamicamente -->
+          </select>
+        </div>
+        <div class="filtro">
+          <label for="filtroUsuario"><i class="fa fa-user"></i> Usuário:</label>
+          <select id="filtroUsuario" aria-label="Filtro por Usuário">
+            <!-- Opções preenchidas dinamicamente -->
+          </select>
+        </div>
+        <div class="filtro">
+          <label for="filtroRede"><i class="fa fa-network-wired"></i> Rede:</label>
+          <select id="filtroRede" aria-label="Filtro por Rede">
+            <option value="">Todas</option>
+            <!-- Opções preenchidas dinamicamente -->
+          </select>
+        </div>
+        <div class="filtro">
+          <label for="filtroMotivo"><i class="fa fa-info-circle"></i> Motivo:</label>
+          <select id="filtroMotivo" aria-label="Filtro por Motivo">
+            <!-- Opções preenchidas dinamicamente -->
+          </select>
+        </div>
+      </div>
+    
+      <div class="linha-filtros">
+        <div class="filtro">
+          <label for="filtroPrioridade"><i class="fa fa-exclamation-triangle"></i> Prioridade:</label>
+          <select id="filtroPrioridade" aria-label="Filtro por Prioridade">
+            <!-- Opções preenchidas dinamicamente -->
+          </select>
+        </div>
+        <div class="filtro">
+          <label for="filtroStatus"><i class="fa fa-tasks"></i> Status:</label>
+          <select id="filtroStatus" aria-label="Filtro por Status">
+            <!-- Opções preenchidas dinamicamente -->
+          </select>
+        </div>
+        <div class="filtro">
+          <label for="filtroDataInicio"><i class="fa fa-calendar-alt"></i> Data Início:</label>
+          <input type="date" id="filtroDataInicio" aria-label="Filtro por Data de Início">
+        </div>
+        <div class="filtro">
+          <label for="filtroDataFim"><i class="fa fa-calendar-alt"></i> Data Fim:</label>
+          <input type="date" id="filtroDataFim" aria-label="Filtro por Data de Fim">
+        </div>
+      </div>
+    
+      <div class="botoes-filtros">
+        <button id="btnAplicarFiltros"><i class="fa fa-filter"></i> Aplicar Filtros</button>
+        <button id="btnLimparFiltros"><i class="fa fa-undo"></i> Limpar Filtros</button>
+      </div>
+    </div>
+    
+
+    <!-- Contêineres dos Gráficos -->
+    <div class="container-graficos">
+      <!-- Exemplo de gráfico com filtros internos e paginação -->
+      <div class="grafico" id="graficoPorUsuario">
+        <!-- Botões de exportação personalizados serão inseridos aqui via JavaScript -->
+        <div class="filtros-grafico">
+          <label for="sortPorUsuario"><i class="fa fa-sort"></i> Ordenar:</label>
+          <select id="sortPorUsuario" aria-label="Ordenar por Usuário">
+            <option value="desc" selected>Decrescente</option>
+            <option value="asc">Crescente</option>
+          </select>
+
+          <label for="limitPorUsuario"><i class="fa fa-sliders-h"></i> Limitar:</label>
+          <input type="number" id="limitPorUsuario" min="1" value="15" placeholder="Número de colunas" aria-label="Limitar número de colunas por Usuário">
+
+          <!-- Controles de Paginação Interna -->
+          <button class="prevPageGrafico" data-campo="usuario" aria-label="Página Anterior para Usuário"><i class="fa fa-chevron-left"></i> Anterior</button>
+          <span class="currentPageGrafico" data-campo="usuario">1</span>
+          <button class="nextPageGrafico" data-campo="usuario" aria-label="Próxima Página para Usuário">Próximo <i class="fa fa-chevron-right"></i></button>
+        </div>
+        <div id="chartPorUsuario" class="chart-container"></div>
+      </div>
+
+      <!-- Repita a estrutura acima para outros gráficos -->
+      <div class="grafico" id="graficoPorCliente">
+        <div class="filtros-grafico">
+          <label for="sortPorCliente"><i class="fa fa-sort"></i> Ordenar:</label>
+          <select id="sortPorCliente" aria-label="Ordenar por Cliente">
+            <option value="desc" selected>Decrescente</option>
+            <option value="asc">Crescente</option>
+          </select>
+
+          <label for="limitPorCliente"><i class="fa fa-sliders-h"></i> Limitar:</label>
+          <input type="number" id="limitPorCliente" min="1" value="15" placeholder="Número de colunas" aria-label="Limitar número de colunas por Cliente">
+
+          <!-- Controles de Paginação Interna -->
+          <button class="prevPageGrafico" data-campo="cliente" aria-label="Página Anterior para Cliente"><i class="fa fa-chevron-left"></i> Anterior</button>
+          <span class="currentPageGrafico" data-campo="cliente">1</span>
+          <button class="nextPageGrafico" data-campo="cliente" aria-label="Próxima Página para Cliente">Próximo <i class="fa fa-chevron-right"></i></button>
+        </div>
+        <div id="chartPorCliente" class="chart-container"></div>
+      </div>
+
+      <div class="grafico" id="graficoPorPrioridade">
+        <div class="filtros-grafico">
+          <label for="sortPorPrioridade"><i class="fa fa-sort"></i> Ordenar:</label>
+          <select id="sortPorPrioridade" aria-label="Ordenar por Prioridade">
+            <option value="desc" selected>Decrescente</option>
+            <option value="asc">Crescente</option>
+          </select>
+
+          <label for="limitPorPrioridade"><i class="fa fa-sliders-h"></i> Limitar:</label>
+          <input type="number" id="limitPorPrioridade" min="1" value="15" placeholder="Número de colunas" aria-label="Limitar número de colunas por Prioridade">
+
+          <!-- Controles de Paginação Interna -->
+          <button class="prevPageGrafico" data-campo="prioridade" aria-label="Página Anterior para Prioridade"><i class="fa fa-chevron-left"></i> Anterior</button>
+          <span class="currentPageGrafico" data-campo="prioridade">1</span>
+          <button class="nextPageGrafico" data-campo="prioridade" aria-label="Próxima Página para Prioridade">Próximo <i class="fa fa-chevron-right"></i></button>
+        </div>
+        <div id="chartPorPrioridade" class="chart-container"></div>
+      </div>
+
+      <div class="grafico" id="graficoPorMotivo">
+        <div class="filtros-grafico">
+          <label for="sortPorMotivo"><i class="fa fa-sort"></i> Ordenar:</label>
+          <select id="sortPorMotivo" aria-label="Ordenar por Motivo">
+            <option value="desc" selected>Decrescente</option>
+            <option value="asc">Crescente</option>
+          </select>
+
+          <label for="limitPorMotivo"><i class="fa fa-sliders-h"></i> Limitar:</label>
+          <input type="number" id="limitPorMotivo" min="1" value="15" placeholder="Número de colunas" aria-label="Limitar número de colunas por Motivo">
+
+          <!-- Controles de Paginação Interna -->
+          <button class="prevPageGrafico" data-campo="motivo" aria-label="Página Anterior para Motivo"><i class="fa fa-chevron-left"></i> Anterior</button>
+          <span class="currentPageGrafico" data-campo="motivo">1</span>
+          <button class="nextPageGrafico" data-campo="motivo" aria-label="Próxima Página para Motivo">Próximo <i class="fa fa-chevron-right"></i></button>
+        </div>
+        <div id="chartPorMotivo" class="chart-container"></div>
+      </div>
+
+      <div class="grafico" id="graficoTicketsPorMes">
+        <div class="filtros-grafico">
+          <label for="sortPorMes"><i class="fa fa-sort"></i> Ordenar:</label>
+          <select id="sortPorMes" aria-label="Ordenar por Mês">
+            <option value="desc" selected>Decrescente</option>
+            <option value="asc">Crescente</option>
+          </select>
+
+          <label for="limitPorMes"><i class="fa fa-sliders-h"></i> Limitar:</label>
+          <input type="number" id="limitPorMes" min="1" value="15" placeholder="Número de colunas" aria-label="Limitar número de colunas por Mês">
+
+          <!-- Controles de Paginação Interna -->
+          <button class="prevPageGrafico" data-campo="mes" aria-label="Página Anterior para Mês"><i class="fa fa-chevron-left"></i> Anterior</button>
+          <span class="currentPageGrafico" data-campo="mes">1</span>
+          <button class="nextPageGrafico" data-campo="mes" aria-label="Próxima Página para Mês">Próximo <i class="fa fa-chevron-right"></i></button>
+        </div>
+        <div id="chartTicketsPorMes" class="chart-container"></div>
+      </div>
+
+      <div class="grafico" id="graficoStatusGeral">
+        <div class="filtros-grafico">
+          <label for="sortPorStatus"><i class="fa fa-sort"></i> Ordenar:</label>
+          <select id="sortPorStatus" aria-label="Ordenar por Status">
+            <option value="desc" selected>Decrescente</option>
+            <option value="asc">Crescente</option>
+          </select>
+
+          <label for="limitPorStatus"><i class="fa fa-sliders-h"></i> Limitar:</label>
+          <input type="number" id="limitPorStatus" min="1" value="15" placeholder="Número de colunas" aria-label="Limitar número de colunas por Status">
+
+          <!-- Controles de Paginação Interna -->
+          <button class="prevPageGrafico" data-campo="status" aria-label="Página Anterior para Status"><i class="fa fa-chevron-left"></i> Anterior</button>
+          <span class="currentPageGrafico" data-campo="status">1</span>
+          <button class="nextPageGrafico" data-campo="status" aria-label="Próxima Página para Status">Próximo <i class="fa fa-chevron-right"></i></button>
+        </div>
+        <div id="chartStatusGeral" class="chart-container"></div>
+      </div>
+    </div>
+
+    <!-- Tabela de tickets abaixo dos gráficos -->
+    <div class="tabela-container">
+      <div class="tabela-header">
+        <h2>Tabela de Tickets</h2>
+        <!-- Botão de Download -->
+        <button id="btnDownloadTabela" title="Baixar tabela">
+          <i class="fa fa-download"></i> Baixar
+        </button>
+      </div>
+      <table id="tabelaTickets" class="sortable table table-striped">
+        <thead style="background-color: lightslategrey;">
+          <tr>
+            <th>ID</th>
+            <th>Cliente</th>
+            <th>Usuário</th>
+            <th>Rede</th>
+            <th>Motivo</th>
+            <th>Prioridade</th>
+            <th>Status</th>
+            <th>Data Início</th>
+            <th>Data Fim</th>
+            <th>Descrição</th>
+          </tr>
+        </thead>
+        <tbody>
+          <!-- Corpo da tabela preenchido dinamicamente -->
+          <tr>
+            <td>123</td>
+            <td>Empresa X</td>
+            <td>João Silva</td>
+            <td>Rede A</td>
+            <td>Problema de Conexão</td>
+            <td>Alta</td>
+            <td>Aberto</td>
+            <td>2025-01-01</td>
+            <td>2025-01-05</td>
+            <td>Descrição detalhada do ticket.</td>
+          </tr>
+          <!-- Mais linhas -->
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Modal de Confirmação para Download da Tabela -->
+  <div id="modalDownloadTabela" class="modal">
+    <div class="modal-content">
+      <span class="close">&times;</span>
+      <h3>Baixar Tabela</h3>
+      <p>Deseja baixar todos os dados ou apenas os filtrados?</p>
+      <button id="btnBaixarTodos" class="btn-export"><i class="fa fa-download"></i> Baixar Todos</button>
+      <button id="btnBaixarFiltrados" class="btn-export"><i class="fa fa-filter"></i> Baixar Filtrados</button>
+    </div>
+  </div>  
+
+  <!-- Controles de Paginação -->
+  <div style="margin: 10px auto; color: white;" id="pagination" class="pagination"> 
+    <button id="prevPage" aria-label="Página Anterior"><i class="fa fa-chevron-left"></i> Anterior</button>
+    <span>Página <span id="currentPage">1</span> de <span id="totalPages">1</span></span>
+    <button id="nextPage" aria-label="Próxima Página">Próximo <i class="fa fa-chevron-right"></i></button>
+  </div>
+
+  <!-- Importar JS no final do body -->
+  <script src="/src/js/dashboardTickets.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js" integrity="sha384-w76AqPfDkMBDXo30jS1Sgez6pr3x5MlQ1ZAGC+nuZB+EYdgRZgiwxhTBTkF7CXvN" crossorigin="anonymous"></script>
+</body>
+</html>

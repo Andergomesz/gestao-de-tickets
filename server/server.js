@@ -20,6 +20,8 @@ const io = new Server(server, {
   },
 });
 
+mysql://root:XsmxjCgluNLpkAuaQkkQRzNgLCutOUwE@autorack.proxy.rlwy.net:57619/railway
+
 // 1. Configura o CORS
 app.use(cors());
 
@@ -33,8 +35,9 @@ const db = mysql.createConnection({
   user: 'root',
   password: 'XsmxjCgluNLpkAuaQkkQRzNgLCutOUwE',
   database: 'railway',
-  port: 3306
+  port: 3000
 });
+
 
 // Conecta ao banco de dados
 db.connect(err => {

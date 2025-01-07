@@ -1,7 +1,8 @@
 {
   "name": "gestao-de-tickets-v4",
   "version": "1.0.0",
-  "main": "index.js",
+  "description": "API de gestão de tickets",
+  "main": "server.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node server.js"
@@ -20,5 +21,7 @@
     "p-limit": "^6.2.0",
     "socket.io": "^4.8.1"
   },
-  "description": ""
+  "engines": {
+    "node": "16.x"
+  }
 }

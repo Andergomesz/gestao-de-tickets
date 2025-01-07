@@ -27,23 +27,12 @@ app.use(cors());
 app.use(express.json({ limit: '50mb' }));
 app.use(express.urlencoded({ limit: '50mb', extended: true }));
 
-<<<<<<< HEAD
-// 3. Conexão com o banco de dados (Railway)
-// Utilize o host (autorack.proxy.rlwy.net) e a porta (57619) fornecidos pelo Railway
-const db = mysql.createConnection({
-  host: 'autorack.proxy.rlwy.net',
-  user: 'root',
-  password: 'XsmxjCgluNLpkAuaQkkQRzNgLCutOUwE',
-  database: 'railway',
-  port: 57619
-=======
 // 3. Conexão com o banco de dados
 const db = mysql.createConnection({
   host: 'localhost',   // ou 127.0.0.1
   user: 'root',
   password: '1234',
   database: 'sistema_tickets'
->>>>>>> parent of 3bd84d7 (Alteração no server)
 });
 
 // Conecta ao banco de dados

@@ -31,7 +31,7 @@ app.use(express.urlencoded({ limit: '50mb', extended: true }));
 const db = mysql.createConnection({
   host: 'mysql.railway.internal',              // ou mysql.railway.internal
   user: 'root',
-  password: 'PrfvdiNQVTtxCnTuGJFQJRnOiGPIGLqZ',
+  password: 'XsmxjCgluNLpkAuaQkkQRzNgLCutOUwE',
   database: 'railway',
   port: 3306
 });
